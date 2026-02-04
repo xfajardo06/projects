@@ -1,9 +1,9 @@
-# Transferencia de conocimiento: ETLs 
+# Transferencia de conocimiento: ETLs AENA, ADIF y SEAPORTS
 
 
 ---
 
-## 1. ¿Qué es un proceso ETL?
+## 1. Procedimiento de una ETL
 
 **ETL** = Extracción de APIs externas → **Transformación** a modelos NGSI (estructura definida) → **Carga** en el Context Broker con **tc-etl-lib**.
 
@@ -17,12 +17,12 @@ flowchart LR
 
 ---
 
-## 2. Resumen por ETL: fuente, autenticación, endpoints, modelo y frecuencia
+## 2. ETLs
 
-Todo el detalle técnico (modelos, variables, código, etc.) estará en el **archivo compartido con la documentación completa** o en el **repositorio de cada ETL en GitHub**. Aquí va un resumen ejecutivo para la presentación.
+**archivo compartido con la documentación completa**
+**repositorio de cada ETL en GitHub**
 
-### Pasos para la obtención de la información (énfasis en extracción)
-
+### Pasos para la obtención de la información
 
 
 ### 2.1 ETL ADIF (ferrocarril)
@@ -35,7 +35,6 @@ Todo el detalle técnico (modelos, variables, código, etc.) estará en el **arc
 | **Modelo de transformación** | **Station** (estaciones) y **CommercialPath** (caminos comerciales / circulaciones). Modelo NGSI documentado en la doc. |
 | **Frecuencia** | Ejecución **diaria** (programada). |
 
-*Detalle completo:* documentación compartida o repositorio de la ETL en GitHub.
 
 ---
 
@@ -49,7 +48,6 @@ Todo el detalle técnico (modelos, variables, código, etc.) estará en el **arc
 | **Modelo de transformación** | **Transport** (vuelos) y **Hubs** (aeropuertos). Modelo NGSI documentado. |
 | **Frecuencia** | Ejecución **manual** (según documentación). La carga al CB se hace cuando la extracción para todos los aeropuertos configurados ha sido correcta. |
 
-*Detalle completo:* documentación compartida o repositorio de la ETL en GitHub.
 
 ---
 
@@ -62,8 +60,6 @@ Todo el detalle técnico (modelos, variables, código, etc.) estará en el **arc
 | **Endpoints (qué se necesita para que devuelva la info)** | • **Autenticación:** POST a la URL de token con `username` y `password`; sin token la API de datos no responde. <br/> • **Datos:** GET a la URL base de la API con **parámetros obligatorios** `dateFrom` y `dateTo` (formato YYYY-MM-DDTHH:MM:SS.SSSZ). Si no se envían fechas, la ETL usa el día anterior por defecto. Sin fechas correctas no hay datos de escalas. |
 | **Modelo de transformación** | **PortCall** (escalas). Modelo NGSI documentado. |
 | **Frecuencia** | Ejecución **diaria** (automática). Por defecto se usa el día anterior si no se indican fechas. |
-
-*Detalle completo:* documentación compartida o repositorio de la ETL en GitHub.
 
 ---
 
