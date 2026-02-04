@@ -1,41 +1,23 @@
-# Transferencia de conocimiento: ETLs y Smart Cities (Valencia)
+# Transferencia de conocimiento: ETLs 
 
-**Warpcom · Context Broker · Vertical Valencia**  
-*Documento base para la presentación*
 
 ---
 
-## 1. Bienvenida y dinámica de la sesión
+## 1. ¿Qué es un proceso ETL?
 
-- **Objetivo:** Que todo quede lo más claro posible.
-- **Dinámica:** Es una **conversación**. Si en cualquier momento algo no queda claro o queréis profundizar, **preguntad sin problema** mientras hablo.
-- **Nivel:** Repaso de nivel medio-alto: muchas etapas, pero sin bajar al detalle de cada línea de código (el código lo compartiré desde el repositorio oficial).
-
----
-
-## 2. ¿Qué es un proceso ETL?
-
-Un **ETL** (Extract, Transform, Load) es un flujo de datos en tres fases:
+**ETL** = Extracción de APIs externas → **Transformación** a modelos NGSI (estructura definida) → **Carga** en el Context Broker con **tc-etl-lib**.
 
 ```mermaid
 flowchart LR
-    A[Extract<br/>Extracción] --> B[Transform<br/>Transformación] --> C[Load<br/>Carga]
-    A -.-> A1[APIs externas]
-    B -.-> B1[Modelos NGSI]
+    A[Extract] --> B[Transform] --> C[Load]
+    A -.-> A1[APIs]
+    B -.-> B1[NGSI]
     C -.-> C1[Context Broker]
 ```
 
-| Fase | Qué hacemos |
-|------|-------------|
-| **Extract** | Obtenemos la información de **APIs externas**. Para el desarrollo nos compartieron la documentación oficial de cada API. |
-| **Transform** | Los datos pasan por un proceso de **transformación** a **modelos concretos** (NGSI). Cada modelo tiene una estructura definida (entidades, atributos, tipos). |
-| **Load** | El **objetivo final** de todas las ETLs es **cargar la información en el Context Broker**. Para ello usamos la librería **tc-etl-lib**, que está documentada y es común a las ETLs del vertical. |
-
-Todas las ETLs de las que hablamos siguen este patrón y usan **tc-etl-lib** para la carga en el Context Broker.
-
 ---
 
-## 3. Resumen por ETL: fuente, autenticación, endpoints, modelo y frecuencia
+## 2. Resumen por ETL: fuente, autenticación, endpoints, modelo y frecuencia
 
 Todo el detalle técnico (modelos, variables, código, etc.) estará en el **archivo compartido con la documentación completa** o en el **repositorio de cada ETL en GitHub**. Aquí va un resumen ejecutivo para la presentación.
 
@@ -50,7 +32,7 @@ Para que cada API **devuelva la información** hace falta cumplir bien la etapa 
 
 Resumiendo: **autenticación + endpoint correcto + parámetros necesarios** son lo que hace que la API funcione y devuelva la info; el resto del flujo (transformación y carga) depende de tener ya esos datos.
 
-### 3.1 ETL ADIF (ferrocarril)
+### 2.1 ETL ADIF (ferrocarril)
 
 | Aspecto | Detalle |
 |---------|---------|
@@ -64,7 +46,7 @@ Resumiendo: **autenticación + endpoint correcto + parámetros necesarios** son 
 
 ---
 
-### 3.2 ETL AENA (aeropuertos)
+### 2.2 ETL AENA (aeropuertos)
 
 | Aspecto | Detalle |
 |---------|---------|
@@ -78,7 +60,7 @@ Resumiendo: **autenticación + endpoint correcto + parámetros necesarios** son 
 
 ---
 
-### 3.3 ETL Puertos (Seaports / Valencia)
+### 2.3 ETL Puertos (Seaports / Valencia)
 
 | Aspecto | Detalle |
 |---------|---------|
@@ -92,7 +74,7 @@ Resumiendo: **autenticación + endpoint correcto + parámetros necesarios** son 
 
 ---
 
-## 4. Procedimiento de despliegue
+## 3. Procedimiento de despliegue
 
 - El código de las ETLs está alojado en un repositorio del **vertical** (por ejemplo, por vertical: ADIF, AENA, Seaports).
 - El **despliegue está automatizado**: al subir/actualizar código, el flujo (por ejemplo Jenkins) se encarga de desplegar y dejar todo configurado en la plataforma.
@@ -100,7 +82,7 @@ Resumiendo: **autenticación + endpoint correcto + parámetros necesarios** son 
 
 ---
 
-## 5. Estándares y prácticas comunes del vertical
+## 4. Estándares y prácticas comunes del vertical
 
 En todas las ETLs del vertical se siguen **mismas prácticas** para mantener coherencia y que el despliegue automatizado funcione:
 
@@ -113,7 +95,7 @@ Esto hace que, quien conozca una ETL del vertical, pueda orientarse rápido en o
 
 ---
 
-## 6. El transversal (vertical): archivos necesarios para el despliegue automatizado
+## 5. El transversal (vertical): archivos necesarios para el despliegue automatizado
 
 - En el repositorio del vertical no solo está el código de la ETL: hay una **estructura común** (transversal) con archivos que el **procedimiento de despliegue automatizado** necesita.
 - Esos archivos **no son aleatorios** ni documentación suelta: tienen **formato y variables concretas** que Jenkins (o la herramienta que se use) espera para:
@@ -125,7 +107,7 @@ Mostrar en la presentación la **estructura típica** del repo (por ejemplo `etl
 
 ---
 
-## 7. Jenkins (y pipeline de despliegue)
+## 6. Jenkins (y pipeline de despliegue)
 
 - Las ETLs se despliegan y/o ejecutan en una **plataforma Jenkins** (o equivalente) donde queda todo configurado.
 - En la sesión se puede comentar:
@@ -137,7 +119,7 @@ Así el equipo sabe dónde mirar para re-ejecutar, ver logs o cambiar configurac
 
 ---
 
-## 8. Código de la ETL a alto nivel
+## 7. Código de la ETL a alto nivel
 
 Para no alargar la presentación con código, se puede resumir el flujo en pasos:
 
@@ -152,7 +134,7 @@ El **código concreto** se comparte desde el **repositorio oficial** del vertica
 
 ---
 
-## 9. Documentación de referencia
+## 8. Documentación de referencia
 
 Todo el detalle técnico (modelos NGSI, autenticación, endpoints, variables, ejecución, código) estará en el **archivo compartido con la documentación completa** o en el **repositorio de cada ETL en GitHub**.
 
@@ -161,7 +143,7 @@ Todo el detalle técnico (modelos NGSI, autenticación, endpoints, variables, ej
 
 ---
 
-## 10. Diagrama de contexto general
+## 9. Diagrama de contexto general
 
 ```mermaid
 flowchart TB
