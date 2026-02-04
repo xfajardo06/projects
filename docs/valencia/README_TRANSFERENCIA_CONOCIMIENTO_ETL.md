@@ -37,7 +37,18 @@ Todas las ETLs de las que hablamos siguen este patrón y usan **tc-etl-lib** par
 
 ## 3. Resumen por ETL: fuente, autenticación, endpoints, modelo y frecuencia
 
-En `docs/valencia/` tenéis la documentación detallada de cada integración. Aquí va un resumen ejecutivo para la presentación.
+Todo el detalle técnico (modelos, variables, código, etc.) estará en el **archivo compartido con la documentación completa** o en el **repositorio de cada ETL en GitHub**. Aquí va un resumen ejecutivo para la presentación.
+
+### Pasos para la obtención de la información (énfasis en extracción)
+
+Para que cada API **devuelva la información** hace falta cumplir bien la etapa de **extracción**:
+
+1. **Autenticación previa:** Tener resueltas las credenciales (API Key, usuario/contraseña o consumer_key/secret) y, si aplica, **obtener el token** (JWT, OAuth) antes de llamar a los endpoints de datos. Sin autenticación correcta la API no devuelve datos o devuelve error.
+2. **Endpoint correcto:** Conocer la **URL base** y el **path** de cada recurso (estaciones, circulaciones, vuelos, port calls, etc.). Cada ETL tiene sus URLs configuradas por variables de entorno.
+3. **Parámetros obligatorios:** Enviar lo que la API exige: códigos de estación, código de aeropuerto, `dateFrom`/`dateTo`, `grant_type`, etc. Si falta algo requerido, la respuesta puede estar vacía o fallar.
+4. **Método y cabeceras:** Usar el método indicado (GET, POST) y las cabeceras necesarias (`User-key`, `Authorization: Bearer <token>`, etc.) en cada petición.
+
+Resumiendo: **autenticación + endpoint correcto + parámetros necesarios** son lo que hace que la API funcione y devuelva la info; el resto del flujo (transformación y carga) depende de tener ya esos datos.
 
 ### 3.1 ETL ADIF (ferrocarril)
 
@@ -45,11 +56,11 @@ En `docs/valencia/` tenéis la documentación detallada de cada integración. Aq
 |---------|---------|
 | **Fuente de datos** | APIs de ADIF: estaciones y circulaciones (llegadas/salidas). |
 | **Método de autenticación** | **API Key** en header: `User-key: <API_KEY>`. Las claves se configuran por variables de entorno. |
-| **Endpoints** | • Estaciones: URL configurable (ej. `https://estaciones.api.adif.es/.../stations/...`) <br/> • Circulaciones: llegadas y salidas (URLs configurables por variable). |
+| **Endpoints (qué se necesita para que devuelva la info)** | • **Estaciones:** URL de estaciones (variable) + API Key en header. <br/> • **Circulaciones:** URLs de llegadas y de salidas (variables) + API Key; en el body se envían los **códigos de estación** (`ETL_ADIF_STATION_CODES_ARRIVALS` / `DEPARTURES`). Sin esos códigos y la key no hay respuesta útil. |
 | **Modelo de transformación** | **Station** (estaciones) y **CommercialPath** (caminos comerciales / circulaciones). Modelo NGSI documentado en la doc. |
 | **Frecuencia** | Ejecución **diaria** (programada). |
 
-*Documentación completa:* `docs/valencia/integracion_adif.md`
+*Detalle completo:* documentación compartida o repositorio de la ETL en GitHub.
 
 ---
 
@@ -59,11 +70,11 @@ En `docs/valencia/` tenéis la documentación detallada de cada integración. Aq
 |---------|---------|
 | **Fuente de datos** | API de AENA: vuelos de llegada y salida por aeropuerto. |
 | **Método de autenticación** | **JWT (Bearer Token)**. Primera llamada POST al endpoint de token con **Basic Auth** (`consumer_key:consumer_secret` en Base64). Luego se usa el token en `Authorization: Bearer <token>`. |
-| **Endpoints** | • Token: `https://globalservicesqa.aena.es/token` (grant_type=client_credentials) <br/> • Datos: base `https://globalservicesqa.aena.es/smartcities-api/v1/` <br/> • `/vuelos-llegada/{aeropuerto}` y `/vuelos-salida/{aeropuerto}`. |
+| **Endpoints (qué se necesita para que devuelva la info)** | • **Token:** POST a la URL de token con `grant_type=client_credentials` y Basic Auth (consumer_key + secret_key). Sin token válido no se puede llamar a los datos. <br/> • **Datos:** URL base + path por recurso. Para cada aeropuerto se llama a `/vuelos-llegada/{aeropuerto}` y `/vuelos-salida/{aeropuerto}`; el **código de aeropuerto** (ej. GCFV) es obligatorio en la URL. La lista de aeropuertos se configura por variable (`ETL_AENA_API_SETTINGS_AIRPORTS`). |
 | **Modelo de transformación** | **Transport** (vuelos) y **Hubs** (aeropuertos). Modelo NGSI documentado. |
 | **Frecuencia** | Ejecución **manual** (según documentación). La carga al CB se hace cuando la extracción para todos los aeropuertos configurados ha sido correcta. |
 
-*Documentación completa:* `docs/valencia/integracion_aena.md`
+*Detalle completo:* documentación compartida o repositorio de la ETL en GitHub.
 
 ---
 
@@ -73,11 +84,11 @@ En `docs/valencia/` tenéis la documentación detallada de cada integración. Aq
 |---------|---------|
 | **Fuente de datos** | API de puertos (Valencia): datos de escalas (port calls) en un rango de fechas. |
 | **Método de autenticación** | **Token OAuth**: POST al servicio de autenticación con `username` y `password`; en la respuesta se obtiene un token que se envía como `Authorization: Bearer <access_token>`. |
-| **Endpoints** | • Autenticación: `https://www.valenciaportpcs.net/oauth/connect/token` <br/> • Datos: `https://SEAPORTScloud.com/openAPIv0/v1/rest` (parámetros `dateFrom`, `dateTo`). |
+| **Endpoints (qué se necesita para que devuelva la info)** | • **Autenticación:** POST a la URL de token con `username` y `password`; sin token la API de datos no responde. <br/> • **Datos:** GET a la URL base de la API con **parámetros obligatorios** `dateFrom` y `dateTo` (formato YYYY-MM-DDTHH:MM:SS.SSSZ). Si no se envían fechas, la ETL usa el día anterior por defecto. Sin fechas correctas no hay datos de escalas. |
 | **Modelo de transformación** | **PortCall** (escalas). Modelo NGSI documentado. |
 | **Frecuencia** | Ejecución **diaria** (automática). Por defecto se usa el día anterior si no se indican fechas. |
 
-*Documentación completa:* `docs/valencia/integracion_seaports.md`
+*Detalle completo:* documentación compartida o repositorio de la ETL en GitHub.
 
 ---
 
@@ -131,8 +142,8 @@ Así el equipo sabe dónde mirar para re-ejecutar, ver logs o cambiar configurac
 Para no alargar la presentación con código, se puede resumir el flujo en pasos:
 
 1. **Carga de configuración:** Lectura de variables de entorno (CB, Keystone, servicio, subservicio, URLs y credenciales de la API).
-2. **Autenticación contra la API fuente:** Según la ETL: API Key (ADIF), JWT (AENA), Token OAuth (Puertos).
-3. **Extracción:** Llamadas a los endpoints correspondientes (estaciones, circulaciones, vuelos, port calls, etc.).
+2. **Autenticación contra la API fuente:** Según la ETL: API Key (ADIF), JWT (AENA), Token OAuth (Puertos). Sin esto los endpoints no devuelven datos.
+3. **Extracción:** Llamadas a los **endpoints** con la URL correcta, método (GET/POST), cabeceras y **parámetros que pide cada API** (códigos de estación, aeropuerto, dateFrom/dateTo, etc.). Es crítico tener bien configurados endpoint y parámetros para que la API funcione y devuelva la información.
 4. **Transformación:** Mapeo de la respuesta de la API al **modelo NGSI** (Station, CommercialPath, Transport, Hubs, PortCall, etc.).
 5. **Autenticación contra Keystone** (usando tc-etl-lib) para obtener token de acceso al Context Broker.
 6. **Carga:** Envío de entidades al Context Broker (Orion) en batch, usando **tc-etl-lib**, con reintentos y timeouts configurables.
@@ -141,17 +152,12 @@ El **código concreto** se comparte desde el **repositorio oficial** del vertica
 
 ---
 
-## 9. Documentación de referencia (Valencia)
+## 9. Documentación de referencia
 
-Toda la información detallada de las ETLs que hemos repasado está en:
+Todo el detalle técnico (modelos NGSI, autenticación, endpoints, variables, ejecución, código) estará en el **archivo compartido con la documentación completa** o en el **repositorio de cada ETL en GitHub**.
 
-| Documento | Contenido |
-|-----------|-----------|
-| `docs/valencia/integracion_adif.md` | ADIF: modelo NGSI (Station, CommercialPath), autenticación, endpoints, variables, ejecución, código. |
-| `docs/valencia/integracion_aena.md` | AENA: modelo NGSI (Hubs, Transport), JWT, endpoints, variables, ejecución, código. |
-| `docs/valencia/integracion_seaports.md` | Puertos: modelo NGSI (PortCall), OAuth, endpoints, variables, ejecución, código. |
-
-Recomendación: usar este README como **guión de la presentación** y los tres `.md` como **referencia técnica** para quien quiera bajar al detalle después.
+- **Para la presentación:** este documento es la base que se comparte en pantalla.
+- **Para el detalle:** usar la documentación completa que se comparta o el repo de la ETL correspondiente en GitHub.
 
 ---
 
@@ -206,6 +212,6 @@ flowchart TB
 6. Transversal: archivos del repo con formato y variables que el despliegue automatizado necesita.
 7. Jenkins: qué hace, dónde está, frecuencia de ejecución por ETL.
 8. Código a alto nivel: config → auth API → extracción → transformación → auth Keystone → carga al CB.
-9. Código real: compartido desde el repositorio oficial; documentación detallada en `docs/valencia/*.md`.
+9. Código real: compartido desde el repositorio oficial; detalle completo en la documentación compartida o en el repositorio de cada ETL en GitHub.
 
-Si queréis, después de la sesión se puede ampliar este README con las preguntas que salgan o con enlaces directos a repos y jobs de Jenkins.
+Si queréis, después de la sesión se puede ampliar este documento con las preguntas que salgan o con enlaces directos a repos y jobs de Jenkins.
