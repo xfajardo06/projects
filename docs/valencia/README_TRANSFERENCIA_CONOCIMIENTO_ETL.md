@@ -42,10 +42,9 @@ flowchart LR
 |---------|---------|
 | **Fuente de datos** | API de AENA: vuelos de llegada y salida por aeropuerto. |
 | **Método de autenticación** | **JWT (Bearer Token)**. Primera llamada POST al endpoint de token con **Basic Auth** (`consumer_key:consumer_secret` en Base64). Luego se usa el token en `Authorization: Bearer <token>`. |
-| **Endpoints (qué se necesita para que devuelva la info)** | • **Token:** POST a la URL de token con `grant_type=client_credentials` y Basic Auth (consumer_key + secret_key). Sin token válido no se puede llamar a los datos. <br/> • **Datos:** URL base + path por recurso. Para cada aeropuerto se llama a `/vuelos-llegada/{aeropuerto}` y `/vuelos-salida/{aeropuerto}`; el **código de aeropuerto** (ej. GCFV) es obligatorio en la URL. La lista de aeropuertos se configura por variable (`ETL_AENA_API_SETTINGS_AIRPORTS`). |
-| **Modelo de transformación** | **Transport** (vuelos) y **Hubs** (aeropuertos). Modelo NGSI documentado. |
-| **Frecuencia** | Ejecución **manual** (según documentación). La carga al CB se hace cuando la extracción para todos los aeropuertos configurados ha sido correcta. |
-
+| **Endpoints (qué se necesita para que devuelva la info)** | • **Token:** POST a la URL de token con `grant_type=client_credentials` y Basic Auth (consumer_key + secret_key). Sin token válido no se puede llamar a los datos. <br/> • **Datos:** URL base + path por recurso. Para cada aeropuerto se llama a `/vuelos-llegada/{aeropuerto}` y `/vuelos-salida/{aeropuerto}`; el **código de aeropuerto** (ej. VLC) es obligatorio en la URL. La lista de aeropuertos se configura por variable (`ETL_AENA_API_SETTINGS_AIRPORTS`). |
+| **Modelo de transformación** | **Transport** (vuelos). Modelo NGSI documentado. |
+| **Frecuencia** | Ejecución **semanal** (según documentación)
 
 ---
 
