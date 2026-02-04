@@ -149,16 +149,3 @@ flowchart TB
 ```
 
 ---
-
-## Resumen de puntos para no olvidar en la presentación
-
-1. ETL: extracción (APIs) → transformación (NGSI) → carga (Context Broker con tc-etl-lib).
-2. Por cada ETL: fuente, autenticación, endpoints, modelo NGSI, frecuencia.
-3. Procedimiento de despliegue: código en el repo del vertical, despliegue automatizado.
-4. Estándares: variables de entorno, tc-etl-lib, archivo estándar de configuración.
-5. Transversal: archivos del repo con formato y variables que el despliegue automatizado necesita.
-6. Jenkins: qué hace, dónde está, frecuencia de ejecución por ETL.
-7. Código a alto nivel: config → auth API → extracción → transformación → auth Keystone → carga al CB.
-8. Código real: compartido desde el repositorio oficial; detalle completo en la documentación compartida o en el repositorio de cada ETL en GitHub.
-
-Si queréis, después de la sesión se puede ampliar este documento con las preguntas que salgan o con enlaces directos a repos y jobs de Jenkins.
