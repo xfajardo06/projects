@@ -60,7 +60,7 @@ flowchart LR
 
 ---
 
-## . Estándares y prácticas comunes del vertical
+## 3. Estándares y prácticas comunes del vertical
 
 En todas las ETLs del vertical se siguen **mismas prácticas** para mantener coherencia y que el despliegue automatizado funcione:
 
