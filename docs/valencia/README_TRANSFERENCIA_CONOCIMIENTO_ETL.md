@@ -23,14 +23,7 @@ Todo el detalle técnico (modelos, variables, código, etc.) estará en el **arc
 
 ### Pasos para la obtención de la información (énfasis en extracción)
 
-Para que cada API **devuelva la información** hace falta cumplir bien la etapa de **extracción**:
 
-1. **Autenticación previa:** Tener resueltas las credenciales (API Key, usuario/contraseña o consumer_key/secret) y, si aplica, **obtener el token** (JWT, OAuth) antes de llamar a los endpoints de datos. Sin autenticación correcta la API no devuelve datos o devuelve error.
-2. **Endpoint correcto:** Conocer la **URL base** y el **path** de cada recurso (estaciones, circulaciones, vuelos, port calls, etc.). Cada ETL tiene sus URLs configuradas por variables de entorno.
-3. **Parámetros obligatorios:** Enviar lo que la API exige: códigos de estación, código de aeropuerto, `dateFrom`/`dateTo`, `grant_type`, etc. Si falta algo requerido, la respuesta puede estar vacía o fallar.
-4. **Método y cabeceras:** Usar el método indicado (GET, POST) y las cabeceras necesarias (`User-key`, `Authorization: Bearer <token>`, etc.) en cada petición.
-
-Resumiendo: **autenticación + endpoint correcto + parámetros necesarios** son lo que hace que la API funcione y devuelva la info; el resto del flujo (transformación y carga) depende de tener ya esos datos.
 
 ### 2.1 ETL ADIF (ferrocarril)
 
@@ -186,14 +179,13 @@ flowchart TB
 
 ## Resumen de puntos para no olvidar en la presentación
 
-1. Saludar y dejar claro que se puede preguntar en cualquier momento.
-2. Explicar ETL en tres fases: extracción de APIs, transformación a modelos NGSI, carga en Context Broker con tc-etl-lib.
-3. Por cada ETL: fuente, autenticación, endpoints, modelo NGSI, frecuencia.
-4. Procedimiento de despliegue: código en el repo del vertical, despliegue automatizado.
-5. Estándares: variables de entorno, tc-etl-lib, archivo estándar de configuración.
-6. Transversal: archivos del repo con formato y variables que el despliegue automatizado necesita.
-7. Jenkins: qué hace, dónde está, frecuencia de ejecución por ETL.
-8. Código a alto nivel: config → auth API → extracción → transformación → auth Keystone → carga al CB.
-9. Código real: compartido desde el repositorio oficial; detalle completo en la documentación compartida o en el repositorio de cada ETL en GitHub.
+1. ETL: extracción (APIs) → transformación (NGSI) → carga (Context Broker con tc-etl-lib).
+2. Por cada ETL: fuente, autenticación, endpoints, modelo NGSI, frecuencia.
+3. Procedimiento de despliegue: código en el repo del vertical, despliegue automatizado.
+4. Estándares: variables de entorno, tc-etl-lib, archivo estándar de configuración.
+5. Transversal: archivos del repo con formato y variables que el despliegue automatizado necesita.
+6. Jenkins: qué hace, dónde está, frecuencia de ejecución por ETL.
+7. Código a alto nivel: config → auth API → extracción → transformación → auth Keystone → carga al CB.
+8. Código real: compartido desde el repositorio oficial; detalle completo en la documentación compartida o en el repositorio de cada ETL en GitHub.
 
 Si queréis, después de la sesión se puede ampliar este documento con las preguntas que salgan o con enlaces directos a repos y jobs de Jenkins.
