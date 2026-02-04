@@ -19,19 +19,17 @@ flowchart LR
 
 ## 2. ETLs
 
-**archivo compartido con la documentación completa**
+**archivo compartido con la documentación completa** <br>
 **repositorio de cada ETL en GitHub**
-
-### Pasos para la obtención de la información
 
 
 ### 2.1 ETL ADIF (ferrocarril)
 
 | Aspecto | Detalle |
 |---------|---------|
-| **Fuente de datos** | APIs de ADIF: estaciones y circulaciones (llegadas/salidas). |
+| **Fuente de datos** | APIs de Transporte ferroviario: estaciones y circulaciones (llegadas/salidas). |
 | **Método de autenticación** | **API Key** en header: `User-key: <API_KEY>`. Las claves se configuran por variables de entorno. |
-| **Endpoints (qué se necesita para que devuelva la info)** | • **Estaciones:** URL de estaciones (variable) + API Key en header. <br/> • **Circulaciones:** URLs de llegadas y de salidas (variables) + API Key; en el body se envían los **códigos de estación** (`ETL_ADIF_STATION_CODES_ARRIVALS` / `DEPARTURES`). Sin esos códigos y la key no hay respuesta útil. |
+| **Endpoints** | • **Estaciones:** URL de estaciones + API Key en header. <br/> • **Circulaciones:** URLs de llegadas y de salidas  + API Key; en el body se envían los **códigos de estación** (`ETL_ADIF_STATION_CODES_ARRIVALS` / `DEPARTURES`). Sin esos códigos y la key no hay respuesta útil. |
 | **Modelo de transformación** | **Station** (estaciones) y **CommercialPath** (caminos comerciales / circulaciones). Modelo NGSI documentado en la doc. |
 | **Frecuencia** | Ejecución **diaria** (programada). |
 
