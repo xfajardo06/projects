@@ -86,7 +86,7 @@ En todas las ETLs del vertical se siguen **mismas prácticas** para mantener coh
 - Las ETLs se despliegan y/o ejecutan en  **Jenkins** donde queda todo configurado.
   - **Dónde** está el Jenkins (o enlace al pipeline).
   - **Qué hace el job:** despliegue del código, inyección de variables, ejecución programada o manual.
-  - **Frecuencia** por ETL (diaria ADIF/Puertos, manual AENA, etc.)
+  - **Frecuencia** por ETL (diaria ADIF/Puertos, semanal AENA, etc.)
 
 ---
 
